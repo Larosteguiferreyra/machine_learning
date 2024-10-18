@@ -51,7 +51,34 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = floor_y - self.rect.height
             self.velocity = 0
 
+class Obstacle(pygame.sprite.Sprite):
+
+    # Constructor. Pass in the color of the block,
+    # and its x and y position
+    def __init__(self, colour, width, height):
+       # Call the parent class (Sprite) constructor
+       pygame.sprite.Sprite.__init__(self)
+
+       # Create an image of the block, and fill it with a color.
+       self.image = pygame.Surface([width, height])
+       pygame.draw.rect(self.image, colour, (0, 0, width, height))
+
+       # Fetch the rectangle object that has the dimensions of the image
+       # Update the position of this object by setting the values of rect.x and rect.y
+       self.rect = self.image.get_rect()
+       self.rect.x = window.width
+       self.rect.y = floor_y - self.rect.height
+       self.velocity = 5
+
+    # define the update function
+    def update(self):
+        self.rect.x -= self.velocity
+
+
 ball = Player("white", window.height * 0.075 , window.height * 0.075)
+obstacles = []
+
+obstacles.append(Obstacle("red", 20, 50)) # this has to be inside the loop (put here for testing)
 
 # game loop
 while running:
@@ -68,12 +95,26 @@ while running:
     # fill the screen with a colour to wipe away the last frame
     screen.fill("black")
 
-    # RENDER YOUR GAME HERE.
-    screen.blit(ball.image, ball.rect)
-    pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005)) # draw the floor
+    # check for death
+    for obstacle in obstacles:
+        if ball.rect.colliderect(obstacle):
+            print("YOU'VE DIED")
+            running = False
+
+
+    # render all obstacles
+    for obstacle in obstacles:
+        obstacle.update()
+        screen.blit(obstacle.image, obstacle.rect)
+    
+    # render the player
     ball.gravity()
     ball.update()
+    screen.blit(ball.image, ball.rect)
 
+    #draw the floor
+    pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005)) # draw the floor
+    
     # flip() the display to print all changes in the screen
     pygame.display.flip()
 
