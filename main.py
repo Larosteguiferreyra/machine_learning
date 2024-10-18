@@ -8,7 +8,7 @@ class Window:
     height = 600
 window = Window()
 
-floor_x = window.height * 0.9
+floor_y = window.height * 0.9
 screen = pygame.display.set_mode((window.width, window.height))
 pygame.display.set_caption("Dino dash")
 clock = pygame.time.Clock()
@@ -31,8 +31,8 @@ class Ball(pygame.sprite.Sprite):
        # Fetch the rectangle object that has the dimensions of the image
        # Update the position of this object by setting the values of rect.x and rect.y
        self.rect = self.image.get_rect()
-       self.rect.x = window.width // 2
-       self.rect.y = window.height // 2
+       self.rect.x = window.width * 0.1
+       self.rect.y = floor_y - self.rect.height
 
 ball = Ball("white", 20, 20)
 
@@ -48,7 +48,7 @@ while running:
 
     # RENDER YOUR GAME HERE.
     screen.blit(ball.image, ball.rect)
-    pygame.draw.line(screen, "white", [0, floor_x], [window.width, floor_x])
+    pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y])
 
     # flip() the display to print all changes in the screen
     pygame.display.flip()
