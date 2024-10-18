@@ -1,0 +1,7 @@
+git pull //download changes from repo
+
+
+git status //check the current status of the working space and staging area
+git add . //add all changes to the staging area
+git commit -m "change description or date" //commit changes to the repo with a description of them
+git push //push local commits to remote repository
