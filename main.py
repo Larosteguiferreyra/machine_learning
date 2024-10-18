@@ -10,7 +10,7 @@ class Window:
     height = 600
 window = Window()
 
-game_over = False
+collisions = 0
 floor_y = window.height * 0.9
 screen = pygame.display.set_mode((window.width, window.height))
 pygame.display.set_caption("Dino dash")
@@ -105,8 +105,7 @@ while running:
     # check for death
     for obstacle in obstacles:
         if ball.rect.colliderect(obstacle):
-            running = False
-            game_over = True
+            collisions += 1
 
     # render all obstacles
     for obstacle in obstacles:
@@ -126,10 +125,4 @@ while running:
 
     clock.tick(60)  # limits FPS to 60
 
-if game_over:
-    screen.fill("black")
-    screen.blit(text, textRect)
-    pygame.display.flip()
-    time.sleep(2.5)
-
-pygame.quit()
+pygame.quit() 
