@@ -34,7 +34,7 @@ class Ball(pygame.sprite.Sprite):
        self.rect.x = window.width * 0.1
        self.rect.y = floor_y - self.rect.height
 
-ball = Ball("white", 20, 20)
+ball = Ball("white", window.height * 0.075 , window.height * 0.075)
 
 # game loop
 while running:
@@ -48,7 +48,7 @@ while running:
 
     # RENDER YOUR GAME HERE.
     screen.blit(ball.image, ball.rect)
-    pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y])
+    pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005)) # draw the floor
 
     # flip() the display to print all changes in the screen
     pygame.display.flip()
