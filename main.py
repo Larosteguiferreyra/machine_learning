@@ -1,13 +1,16 @@
 # machine learning "dino dash" game
 
-import pygame
-
 # pygame setup
+import pygame
+import time
+pygame.init()
+
 class Window:
     width = 800
     height = 600
 window = Window()
 
+game_over = False
 floor_y = window.height * 0.9
 screen = pygame.display.set_mode((window.width, window.height))
 pygame.display.set_caption("Dino dash")
@@ -74,9 +77,13 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self):
         self.rect.x -= self.velocity
 
-
 ball = Player("white", window.height * 0.075 , window.height * 0.075)
 obstacles = []
+font = pygame.font.Font('freesansbold.ttf', 32)
+
+text = font.render('YOU HAVE DIED. ERES MALO', True, 'white', 'black')
+textRect = text.get_rect()
+textRect.center = (window.width // 2, window.height // 2)
 
 obstacles.append(Obstacle("red", 20, 50)) # this has to be inside the loop (put here for testing)
 
@@ -98,9 +105,8 @@ while running:
     # check for death
     for obstacle in obstacles:
         if ball.rect.colliderect(obstacle):
-            print("YOU'VE DIED")
             running = False
-
+            game_over = True
 
     # render all obstacles
     for obstacle in obstacles:
@@ -119,5 +125,11 @@ while running:
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
+
+if game_over:
+    screen.fill("black")
+    screen.blit(text, textRect)
+    pygame.display.flip()
+    time.sleep(2.5)
 
 pygame.quit()
