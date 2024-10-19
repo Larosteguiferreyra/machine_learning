@@ -87,6 +87,23 @@ textRect.center = (window.width // 2, window.height // 2)
 
 obstacles.append(Obstacle("red", 20, 50)) # this has to be inside the loop (put here for testing)
 
+# Initialize Pygame and font
+pygame.init()
+font = pygame.font.Font(None, 36)
+
+# Function to display the number of collisions
+def display_collisions(screen, collisions):
+    text = font.render(f"Collisions: {collisions}", True, (255, 255, 255))
+    screen.blit(text, (10, 10))
+
+# Initialize variables
+collisions = 0
+obstacle_timer = 0
+obstacle_interval = 1000  # Time in milliseconds between new obstacles
+
+# Assuming window, ball, and obstacles are already defined
+textRect.center = (window.width // 2, window.height // 2)
+
 # game loop
 while running:
     # process input
@@ -102,10 +119,16 @@ while running:
     # fill the screen with a colour to wipe away the last frame
     screen.fill("black")
 
+    # Create new obstacles at intervals
+    if pygame.time.get_ticks() - obstacle_timer > obstacle_interval:
+        obstacles.append(Obstacle("red", 20, 50))
+        obstacle_timer = pygame.time.get_ticks()
+
     # check for death
-    for obstacle in obstacles:
-        if ball.rect.colliderect(obstacle):
+    for obstacle in obstacles[:]:
+        if ball.rect.colliderect(obstacle.rect):
             collisions += 1
+            obstacles.remove(obstacle)
 
     # render all obstacles
     for obstacle in obstacles:
@@ -117,8 +140,11 @@ while running:
     ball.update()
     screen.blit(ball.image, ball.rect)
 
-    #draw the floor
+    # draw the floor
     pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005)) # draw the floor
+
+    # Display the number of collisions
+    display_collisions(screen, collisions)
     
     # flip() the display to print all changes in the screen
     pygame.display.flip()
