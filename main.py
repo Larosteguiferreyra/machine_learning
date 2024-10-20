@@ -124,6 +124,11 @@ while running:
     for obstacle in obstacles:
         obstacle.update()
         screen.blit(obstacle.image, obstacle.rect)
+
+    # delete the obstacles when they get out of the screen
+        for obstacle in obstacles:
+            if obstacle.rect.x < 0:
+                obstacles.remove(obstacle)
     
     # render the player
     ball.gravity()
@@ -135,6 +140,7 @@ while running:
 
     # Display the number of collisions
     display_collisions(screen, collisions)
+    print(len(obstacles))
     
     # flip() the display to print all changes in the screen
     pygame.display.flip()
