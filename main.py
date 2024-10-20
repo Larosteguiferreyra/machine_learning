@@ -2,7 +2,6 @@
 
 # pygame setup
 import pygame
-import time
 pygame.init()
 
 class Window:
@@ -10,13 +9,21 @@ class Window:
     height = 600
 window = Window()
 
-collisions = 0
-floor_y = window.height * 0.9
 screen = pygame.display.set_mode((window.width, window.height))
 pygame.display.set_caption("Dino dash")
 clock = pygame.time.Clock()
+
+
+# declare variables
+collisions = 0
+floor_y = window.height * 0.9
 running = True
 g = 1 #gravity value
+collisions = 0
+obstacle_timer = 0
+obstacle_interval = 1000  # Time in milliseconds between new obstacles
+font = pygame.font.Font(None, 36)
+
 
 # asset setup
 class Player(pygame.sprite.Sprite):
@@ -77,32 +84,15 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self):
         self.rect.x -= self.velocity
 
-ball = Player("white", window.height * 0.075 , window.height * 0.075)
-obstacles = []
-font = pygame.font.Font('freesansbold.ttf', 32)
-
-text = font.render('YOU HAVE DIED. ERES MALO', True, 'white', 'black')
-textRect = text.get_rect()
-textRect.center = (window.width // 2, window.height // 2)
-
-obstacles.append(Obstacle("red", 20, 50)) # this has to be inside the loop (put here for testing)
-
-# Initialize Pygame and font
-pygame.init()
-font = pygame.font.Font(None, 36)
-
 # Function to display the number of collisions
 def display_collisions(screen, collisions):
     text = font.render(f"Collisions: {collisions}", True, (255, 255, 255))
     screen.blit(text, (10, 10))
 
-# Initialize variables
-collisions = 0
-obstacle_timer = 0
-obstacle_interval = 1000  # Time in milliseconds between new obstacles
 
-# Assuming window, ball, and obstacles are already defined
-textRect.center = (window.width // 2, window.height // 2)
+#initialize assets
+ball = Player("white", window.height * 0.075 , window.height * 0.075)
+obstacles = []
 
 # game loop
 while running:
@@ -141,7 +131,7 @@ while running:
     screen.blit(ball.image, ball.rect)
 
     # draw the floor
-    pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005)) # draw the floor
+    pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005))
 
     # Display the number of collisions
     display_collisions(screen, collisions)
@@ -152,5 +142,3 @@ while running:
     clock.tick(60)  # limits FPS to 60
 
 pygame.quit() 
-# probando pull push
-
