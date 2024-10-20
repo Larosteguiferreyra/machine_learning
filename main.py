@@ -109,7 +109,7 @@ while running:
     # process input
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE] and ball.grounded():
-        ball.velocity = -25
+        ball.velocity = -18
 
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
