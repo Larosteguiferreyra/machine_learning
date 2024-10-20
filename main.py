@@ -18,7 +18,7 @@ clock = pygame.time.Clock()
 collisions = 0
 floor_y = window.height * 0.9
 running = True
-g = 1 #gravity value
+G = 3000 #gravity value
 collisions = 0
 obstacle_timer = 0
 obstacle_interval = 1000  # Time in milliseconds between new obstacles
@@ -46,16 +46,16 @@ class Player(pygame.sprite.Sprite):
        self.velocity = 0
 
     # define gravity
-    def gravity(self):
-        self.velocity += g
+    def gravity(self, dt):
+        self.velocity += G * dt
 
     # check if the ball is touching the floor
     def grounded(self):
         return self.rect.y >= floor_y - self.rect.height
 
     # define the update function
-    def update(self):
-        self.rect.y += self.velocity
+    def update(self, dt):
+        self.rect.y += self.velocity * dt
 
         if self.grounded():
             self.rect.y = floor_y - self.rect.height
@@ -78,11 +78,11 @@ class Obstacle(pygame.sprite.Sprite):
        self.rect = self.image.get_rect()
        self.rect.x = window.width
        self.rect.y = floor_y - self.rect.height
-       self.velocity = 5
+       self.velocity = 300
 
     # define the update function
-    def update(self):
-        self.rect.x -= self.velocity
+    def update(self, dt):
+        self.rect.x -= self.velocity * dt
 
 # Function to display the number of collisions
 def display_collisions(screen, collisions):
@@ -93,13 +93,19 @@ def display_collisions(screen, collisions):
 #initialize assets
 ball = Player("white", window.height * 0.075 , window.height * 0.075)
 obstacles = []
+previous_time = pygame.time.get_ticks()
 
 # game loop
 while running:
+    # calculate delta time
+    current_time = pygame.time.get_ticks()
+    dt = (current_time - previous_time) / 1000 #get the delta time in seconds
+    previous_time = current_time
+
     # process input
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE] and ball.grounded():
-        ball.velocity = -18
+        ball.velocity = -1000
 
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
@@ -122,17 +128,17 @@ while running:
 
     # render all obstacles
     for obstacle in obstacles:
-        obstacle.update()
+        obstacle.update(dt)
         screen.blit(obstacle.image, obstacle.rect)
 
-    # delete the obstacles when they get out of the screen
+    # delete the obstacles when they move out of the screen
         for obstacle in obstacles:
             if obstacle.rect.x < 0:
                 obstacles.remove(obstacle)
     
     # render the player
-    ball.gravity()
-    ball.update()
+    ball.gravity(dt)
+    ball.update(dt)
     screen.blit(ball.image, ball.rect)
 
     # draw the floor
@@ -140,8 +146,7 @@ while running:
 
     # Display the number of collisions
     display_collisions(screen, collisions)
-    print(len(obstacles))
-    
+
     # flip() the display to print all changes in the screen
     pygame.display.flip()
 
