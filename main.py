@@ -151,6 +151,4 @@ while running:
 
     clock.tick(60)  # limits FPS to 60
 
-    print(len(obstacles))
-
 pygame.quit() 
