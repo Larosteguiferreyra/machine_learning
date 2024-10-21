@@ -2,6 +2,7 @@
 
 # pygame setup
 import pygame
+from random import randint
 pygame.init()
 
 class Window:
@@ -21,7 +22,7 @@ running = True
 G = 3000 #gravity value
 collisions = 0
 obstacle_timer = 0
-obstacle_interval = 1000  # Time in milliseconds between new obstacles
+obstacle_interval = 0
 font = pygame.font.Font(None, 36)
 
 
@@ -119,6 +120,7 @@ while running:
     if pygame.time.get_ticks() - obstacle_timer > obstacle_interval:
         obstacles.append(Obstacle("red", 20, 50))
         obstacle_timer = pygame.time.get_ticks()
+        obstacle_interval = randint(500, 2000)
 
     # check for death
     for obstacle in obstacles[:]:
