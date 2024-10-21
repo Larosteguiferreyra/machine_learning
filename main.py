@@ -21,6 +21,7 @@ floor_y = window.height * 0.9
 running = True
 G = 3000 #gravity value
 collisions = 0
+avoided = 0
 obstacle_timer = 0
 obstacle_interval = 0
 font = pygame.font.Font(None, 36)
@@ -90,6 +91,11 @@ def display_collisions(screen, collisions):
     text = font.render(f"Collisions: {collisions}", True, (255, 255, 255))
     screen.blit(text, (10, 10))
 
+# function to display the number of obstacles avoided
+def display_avoided(screen, avoided):
+    text = font.render(f"Obstacles avoided: {avoided}", True, (255, 255, 255))
+    screen.blit(text, (10, 50))
+
 
 #initialize assets
 ball = Player("white", window.height * 0.075 , window.height * 0.075)
@@ -128,6 +134,7 @@ while running:
             collisions += 1
             obstacles.remove(obstacle)
         elif obstacle.rect.x < 0:
+            avoided += 1
             obstacles.remove(obstacle)
 
     # render all obstacles
@@ -143,8 +150,9 @@ while running:
     # draw the floor
     pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005))
 
-    # Display the number of collisions
+    # Display the number of collisions and avoidances
     display_collisions(screen, collisions)
+    display_avoided(screen, avoided)
 
     # flip() the display to print all changes in the screen
     pygame.display.flip()
