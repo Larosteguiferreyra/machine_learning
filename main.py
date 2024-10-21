@@ -122,21 +122,18 @@ while running:
         obstacle_timer = pygame.time.get_ticks()
         obstacle_interval = randint(500, 2000)
 
-    # check for death
+    # check for death and remove obstacles when they move out of the screen
     for obstacle in obstacles[:]:
         if ball.rect.colliderect(obstacle.rect):
             collisions += 1
+            obstacles.remove(obstacle)
+        elif obstacle.rect.x < 0:
             obstacles.remove(obstacle)
 
     # render all obstacles
     for obstacle in obstacles:
         obstacle.update(dt)
         screen.blit(obstacle.image, obstacle.rect)
-
-    # delete the obstacles when they move out of the screen
-        for obstacle in obstacles:
-            if obstacle.rect.x < 0:
-                obstacles.remove(obstacle)
     
     # render the player
     ball.gravity(dt)
@@ -153,5 +150,7 @@ while running:
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
+
+    print(len(obstacles))
 
 pygame.quit() 
