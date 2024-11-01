@@ -3,6 +3,7 @@
 # pygame setup
 import pygame
 from random import randint
+import math
 pygame.init()
 
 class Window:
@@ -46,10 +47,15 @@ class Player(pygame.sprite.Sprite):
        self.rect.x = window.width * 0.1
        self.rect.y = window.height // 2
        self.velocity = 0
+       self.distance_to_obstacle = 0
 
     # define gravity
     def gravity(self, dt):
         self.velocity += G * dt
+
+    # method to calculate distance to an obstacle
+    def calculate_distance(self, obstacle):
+        self.distance_to_obstacle = math.sqrt((self.rect.x - obstacle.rect.x) ** 2 + (self.rect.y - obstacle.rect.y) ** 2)
 
     # check if the ball is touching the floor
     def grounded(self):
