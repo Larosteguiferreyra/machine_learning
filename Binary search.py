@@ -53,7 +53,8 @@ class Player(pygame.sprite.Sprite):
     def gravity(self, dt):
         self.velocity += G * dt
 
-    # calculate distance to an obstacle
+    # calculate distance to the first obstacle
+    # the distance is taken from the leftmost border of the player's crash box rightmost border of the obstacle
     def calculate_distance(self, obstacle):
         self.distance_to_obstacle = obstacle.rect.x - self.rect.x
 
