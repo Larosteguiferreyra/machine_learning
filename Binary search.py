@@ -53,9 +53,10 @@ class Player(pygame.sprite.Sprite):
     def gravity(self, dt):
         self.velocity += G * dt
 
-    # method to calculate distance to an obstacle
+    # calculate distance to an obstacle
     def calculate_distance(self, obstacle):
-        self.distance_to_obstacle = math.sqrt((self.rect.x - obstacle.rect.x) ** 2 + (self.rect.y - obstacle.rect.y) ** 2)
+        self.distance_to_obstacle = obstacle.rect.x - self.rect.x
+
 
     # check if the ball is touching the floor
     def grounded(self):
@@ -64,6 +65,7 @@ class Player(pygame.sprite.Sprite):
     # define the update function
     def update(self, dt):
         self.rect.y += self.velocity * dt
+        self.calculate_distance(obstacles[0])
 
         if self.grounded():
             self.rect.y = floor_y - self.rect.height
@@ -164,5 +166,7 @@ while running:
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
+
+    print(ball.distance_to_obstacle)
 
 pygame.quit() 
