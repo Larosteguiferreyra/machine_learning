@@ -79,7 +79,6 @@ class Player(pygame.sprite.Sprite):
             if next_obstacle.rect.x + next_obstacle.rect.width <= self.rect.x and not next_obstacle.avoided:
                 avoided += 1
                 next_obstacle.avoided = True
-                print('avoided')
             else:
                 pass
 
@@ -110,15 +109,12 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self, dt):
         self.rect.x -= self.velocity * dt
 
-# Function to display the number of collisions
-def display_collisions(screen, collisions):
-    text = font.render(f"Collisions: {collisions}", True, (255, 255, 255))
-    screen.blit(text, (10, 10))
-
-# function to display the number of obstacles avoided
-def display_avoided(screen, avoided):
-    text = font.render(f"Obstacles avoided: {avoided}", True, (255, 255, 255))
-    screen.blit(text, (10, 50))
+# Function to display the number of collisions and avoidances
+def display_text(screen, collisions, avoided):
+    collisions_text = font.render(f"Collisions: {collisions}", True, (255, 255, 255))
+    avoided_text = font.render(f"Obstacles avoided: {avoided}", True, (255, 255, 255))
+    screen.blit(collisions_text, (10, 10))
+    screen.blit(avoided_text, (10, 50))
 
 # function to store the next obstacle in the variable
 def find_next_obstacle():
@@ -135,9 +131,6 @@ previous_time = pygame.time.get_ticks()
 
 # game loop
 while running:
-
-    ball.check_avoidance()
-    find_next_obstacle()
 
     # calculate delta time
     current_time = pygame.time.get_ticks()
@@ -163,12 +156,14 @@ while running:
         obstacle_timer = pygame.time.get_ticks()
         obstacle_interval = randint(500, 2000)
 
-    # check for death and remove obstacles when they move out of the screen
+    # check for death and avoidance, and remove obstacles when they move out of the screen
+    ball.check_avoidance()
+    find_next_obstacle()
+
     for obstacle in obstacles[:]:
         if ball.rect.colliderect(obstacle.rect):
             collisions += 1
             obstacles.remove(obstacle)
-            print('collision')
         elif obstacle.rect.x < 0:
             obstacles.remove(obstacle)
 
@@ -186,15 +181,12 @@ while running:
     pygame.draw.line(screen, "white", [0, floor_y], [window.width, floor_y], int(window.height * 0.005))
 
     # Display the number of collisions and avoidances
-    display_collisions(screen, collisions)
-    display_avoided(screen, avoided)
+    display_text(screen, collisions, avoided)
 
     # flip() the display to print all changes in the screen
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
 
-    if next_obstacle != None:
-        print((next_obstacle.rect.x + next_obstacle.rect.width) - ball.rect.x)
 
 pygame.quit()
