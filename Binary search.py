@@ -21,11 +21,11 @@ collisions = 0
 floor_y = window.height * 0.9
 running = True
 G = 3000 #gravity value
-collisions = 0
 avoided = 0
 obstacle_timer = 0
 obstacle_interval = 0
 font = pygame.font.Font(None, 36)
+next_obstacle = None
 
 
 # asset setup
@@ -72,6 +72,18 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = floor_y - self.rect.height
             self.velocity = 0
 
+    # check if the obstacle was avoided
+    def check_avoidance(self):
+        if next_obstacle:
+            global avoided
+            if next_obstacle.rect.x + next_obstacle.rect.width <= self.rect.x and not next_obstacle.avoided:
+                avoided += 1
+                next_obstacle.avoided = True
+                print('avoided')
+            else:
+                pass
+
+
 class Obstacle(pygame.sprite.Sprite):
 
     # Constructor. Pass in the color of the block,
@@ -91,6 +103,9 @@ class Obstacle(pygame.sprite.Sprite):
        self.rect.y = floor_y - self.rect.height
        self.velocity = 300
 
+       # create a variable to store whether this particular obstacle was already avoided
+       self.avoided = False
+
     # define the update function
     def update(self, dt):
         self.rect.x -= self.velocity * dt
@@ -105,6 +120,13 @@ def display_avoided(screen, avoided):
     text = font.render(f"Obstacles avoided: {avoided}", True, (255, 255, 255))
     screen.blit(text, (10, 50))
 
+# function to store the next obstacle in the variable
+def find_next_obstacle():
+    for obstacle in obstacles:
+        global next_obstacle
+        if obstacle.rect.x + obstacle.rect.width >= ball.rect.x:
+            next_obstacle = obstacle
+            break
 
 #initialize assets
 ball = Player("white", window.height * 0.075 , window.height * 0.075)
@@ -113,6 +135,10 @@ previous_time = pygame.time.get_ticks()
 
 # game loop
 while running:
+
+    ball.check_avoidance()
+    find_next_obstacle()
+
     # calculate delta time
     current_time = pygame.time.get_ticks()
     dt = (current_time - previous_time) / 1000 #get the delta time in seconds
@@ -142,8 +168,8 @@ while running:
         if ball.rect.colliderect(obstacle.rect):
             collisions += 1
             obstacles.remove(obstacle)
+            print('collision')
         elif obstacle.rect.x < 0:
-            avoided += 1
             obstacles.remove(obstacle)
 
     # render all obstacles
@@ -168,6 +194,7 @@ while running:
 
     clock.tick(60)  # limits FPS to 60
 
-    print(ball.distance_to_obstacle)
+    if next_obstacle != None:
+        print((next_obstacle.rect.x + next_obstacle.rect.width) - ball.rect.x)
 
-pygame.quit() 
+pygame.quit()
