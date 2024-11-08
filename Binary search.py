@@ -3,7 +3,6 @@
 # pygame setup
 import pygame
 from random import randint
-import math
 pygame.init()
 
 class Window:
@@ -53,6 +52,10 @@ class Player(pygame.sprite.Sprite):
     def gravity(self, dt):
         self.velocity += G * dt
 
+    def jump(self):
+        if self.grounded():
+            self.velocity = -1000
+
     # calculate distance to the first obstacle
     # the distance is taken from the leftmost border of the player's crash box rightmost border of the obstacle
     def calculate_distance(self, obstacle):
@@ -79,6 +82,7 @@ class Player(pygame.sprite.Sprite):
             if next_obstacle.rect.x + next_obstacle.rect.width <= self.rect.x and not next_obstacle.avoided:
                 avoided += 1
                 next_obstacle.avoided = True
+                #bot.calculate_jump_distance()
             else:
                 pass
 
@@ -109,6 +113,21 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self, dt):
         self.rect.x -= self.velocity * dt
 
+
+class Machine():
+    def __init__(self):
+        self.good_jumps = []
+        self.bad_jumps = []
+        self.jump_distance = 100
+
+    # decide whether to jump
+    def jump(self):
+        if ball.distance_to_obstacle <= self.jump_distance:
+            ball.jump()
+
+#    def calculate_jump_distance(self):
+#        self.jump_distance = randint(0, ball.distance_to_obstacle)
+
 # Function to display the number of collisions and avoidances
 def display_text(screen, collisions, avoided):
     collisions_text = font.render(f"Collisions: {collisions}", True, (255, 255, 255))
@@ -126,6 +145,7 @@ def find_next_obstacle():
 
 #initialize assets
 ball = Player("white", window.height * 0.075 , window.height * 0.075)
+bot = Machine()
 obstacles = []
 previous_time = pygame.time.get_ticks()
 
@@ -139,8 +159,8 @@ while running:
 
     # process input
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_SPACE] and ball.grounded():
-        ball.velocity = -1000
+    if keys[pygame.K_SPACE]:
+        ball.jump()
 
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
@@ -164,6 +184,7 @@ while running:
         if ball.rect.colliderect(obstacle.rect):
             collisions += 1
             obstacles.remove(obstacle)
+            #bot.calculate_jump_distance()
         elif obstacle.rect.x < 0:
             obstacles.remove(obstacle)
 
@@ -172,6 +193,9 @@ while running:
         obstacle.update(dt)
         screen.blit(obstacle.image, obstacle.rect)
     
+    # decide whether the bot will jump
+    bot.jump()
+
     # render the player
     ball.gravity(dt)
     ball.update(dt)
@@ -188,5 +212,6 @@ while running:
 
     clock.tick(60)  # limits FPS to 60
 
+    print(ball.distance_to_obstacle)
 
 pygame.quit()
