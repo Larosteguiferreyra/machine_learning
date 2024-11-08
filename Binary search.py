@@ -59,7 +59,7 @@ class Player(pygame.sprite.Sprite):
     # calculate distance to the first obstacle
     # the distance is taken from the leftmost border of the player's crash box rightmost border of the obstacle
     def calculate_distance(self, obstacle):
-        self.distance_to_obstacle = obstacle.rect.x - self.rect.x
+        self.distance_to_obstacle = obstacle.rect.x + obstacle.rect.width - self.rect.x
 
 
     # check if the ball is touching the floor
@@ -69,7 +69,7 @@ class Player(pygame.sprite.Sprite):
     # define the update function
     def update(self, dt):
         self.rect.y += self.velocity * dt
-        self.calculate_distance(obstacles[0])
+        self.calculate_distance(next_obstacle)
 
         if self.grounded():
             self.rect.y = floor_y - self.rect.height
@@ -77,6 +77,7 @@ class Player(pygame.sprite.Sprite):
 
     # check if the obstacle was avoided
     def check_avoidance(self):
+        global next_obstacle
         if next_obstacle:
             global avoided
             if next_obstacle.rect.x + next_obstacle.rect.width <= self.rect.x and not next_obstacle.avoided:
@@ -137,8 +138,8 @@ def display_text(screen, collisions, avoided):
 
 # function to store the next obstacle in the variable
 def find_next_obstacle():
+    global next_obstacle
     for obstacle in obstacles:
-        global next_obstacle
         if obstacle.rect.x + obstacle.rect.width >= ball.rect.x:
             next_obstacle = obstacle
             break
@@ -211,7 +212,6 @@ while running:
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
-
-    print(ball.distance_to_obstacle)
+    
 
 pygame.quit()
