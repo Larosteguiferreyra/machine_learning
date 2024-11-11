@@ -117,9 +117,8 @@ class Obstacle(pygame.sprite.Sprite):
 
 class Machine():
     def __init__(self):
-        self.good_jumps = []
-        self.bad_jumps = []
-        self.jump_distance = 100
+        self.jumps = []
+        self.jump_distance = 150
 
     # decide whether to jump
     def jump(self):
@@ -212,6 +211,6 @@ while running:
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
-    
+
 
 pygame.quit()
