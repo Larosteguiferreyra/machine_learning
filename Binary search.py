@@ -53,7 +53,15 @@ class Player(pygame.sprite.Sprite):
         self.velocity += G * dt
 
     def jump(self):
-        if self.grounded():
+        global bot  # Ensure we access the bot instance
+        if next_obstacle and self.grounded():  # Only jump if grounded and there's a next obstacle
+            # Calculate the X-distance to the obstacle
+            self.last_jump_distance = next_obstacle.rect.left - self.rect.left
+            
+            # Notify the bot (Machine) of this jump distance
+            bot.last_jump_distance = self.last_jump_distance
+            
+            # Perform the jump
             self.velocity = -1000
 
     # calculate distance to the first obstacle
@@ -83,9 +91,7 @@ class Player(pygame.sprite.Sprite):
             if next_obstacle.rect.x + next_obstacle.rect.width <= self.rect.x and not next_obstacle.avoided:
                 avoided += 1
                 next_obstacle.avoided = True
-                #bot.calculate_jump_distance()
-            else:
-                pass
+                bot.calculate_y_difference(next_obstacle)  # Record metrics after avoidance
 
 
 class Obstacle(pygame.sprite.Sprite):
@@ -119,31 +125,29 @@ class Machine():
     def __init__(self):
         self.jumps = {}  # Stores jumps with their metrics
         self.jump_count = 0  # Keeps track of the jump count
+        self.last_jump_distance = None  # Store distance at jump initiation
 
     # Record jump data
-    def record_jump(self, distance_to_obstacle, y_difference):
-        self.jumps[self.jump_count] = (distance_to_obstacle, y_difference)
-        self.jump_count += 1
+    def record_jump(self, y_difference):
+        if self.last_jump_distance is not None:
+            self.jumps[self.jump_count] = (self.last_jump_distance, y_difference)
+            self.jump_count += 1
+            self.last_jump_distance = None  # Reset for the next jump
 
     # Decide whether to jump and record metrics
     def jump(self):
         global next_obstacle
 
         if next_obstacle and ball.distance_to_obstacle <= 150:  # Default threshold for jumping
-            # Record metrics
-            distance_to_obstacle_at_jump = ball.distance_to_obstacle
+            # Record the distance at the time of jumping
             ball.jump()
 
-            # After jump, calculate Y-difference before moving to the next obstacle
-            if next_obstacle.rect.x + next_obstacle.rect.width <= ball.rect.x:
-                y_difference = abs(ball.rect.y - (floor_y - ball.rect.height))  # Grounded height
-                self.record_jump(distance_to_obstacle_at_jump, y_difference)
-    """       
-    # decide whether to jump
-    def jump(self):
-        if ball.distance_to_obstacle <= self.jump_distance:
-            ball.jump()
-"""   
+    # Calculate Y-difference when the obstacle is avoided
+    def calculate_y_difference(self, obstacle):
+        y_difference = abs((ball.rect.bottom) - (obstacle.rect.top))
+        self.record_jump(y_difference)
+
+
 #    def calculate_jump_distance(self):
 #        self.jump_distance = randint(0, ball.distance_to_obstacle)
 
