@@ -117,22 +117,33 @@ class Obstacle(pygame.sprite.Sprite):
 
 class Machine():
     def __init__(self):
-        self.jumps = {}
-        self.jump_distance = 150
-    #good or bad jump 
-    """
-    def good_jump(self, distance_to_obstacle):
-        if ball.rect.y in [478, 479, 480]:
-            distance_to_obstacle_j = self.distance_to_obstacle
-            if self.distance_to_obstacle == x:
-                append to list 
-"""
-            
+        self.jumps = {}  # Stores jumps with their metrics
+        self.jump_count = 0  # Keeps track of the jump count
+
+    # Record jump data
+    def record_jump(self, distance_to_obstacle, y_difference):
+        self.jumps[self.jump_count] = (distance_to_obstacle, y_difference)
+        self.jump_count += 1
+
+    # Decide whether to jump and record metrics
+    def jump(self):
+        global next_obstacle
+
+        if next_obstacle and ball.distance_to_obstacle <= 150:  # Default threshold for jumping
+            # Record metrics
+            distance_to_obstacle_at_jump = ball.distance_to_obstacle
+            ball.jump()
+
+            # After jump, calculate Y-difference before moving to the next obstacle
+            if next_obstacle.rect.x + next_obstacle.rect.width <= ball.rect.x:
+                y_difference = abs(ball.rect.y - (floor_y - ball.rect.height))  # Grounded height
+                self.record_jump(distance_to_obstacle_at_jump, y_difference)
+    """       
     # decide whether to jump
     def jump(self):
         if ball.distance_to_obstacle <= self.jump_distance:
             ball.jump()
-
+"""   
 #    def calculate_jump_distance(self):
 #        self.jump_distance = randint(0, ball.distance_to_obstacle)
 
@@ -219,6 +230,6 @@ while running:
     pygame.display.flip()
 
     clock.tick(120)  # limits FPS to 60
-    print(ball.rect.y)
+    print(bot.jumps)
 
 pygame.quit()
