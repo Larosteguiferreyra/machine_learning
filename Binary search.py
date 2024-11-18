@@ -25,7 +25,7 @@ obstacle_timer = 0
 obstacle_interval = 0
 font = pygame.font.Font(None, 36)
 next_obstacle = None
-
+distance_to_obstacle_j = 0
 
 # asset setup
 class Player(pygame.sprite.Sprite):
@@ -117,9 +117,17 @@ class Obstacle(pygame.sprite.Sprite):
 
 class Machine():
     def __init__(self):
-        self.jumps = []
+        self.jumps = {}
         self.jump_distance = 150
-
+    #good or bad jump 
+    """
+    def good_jump(self, distance_to_obstacle):
+        if ball.rect.y in [478, 479, 480]:
+            distance_to_obstacle_j = self.distance_to_obstacle
+            if self.distance_to_obstacle == x:
+                append to list 
+"""
+            
     # decide whether to jump
     def jump(self):
         if ball.distance_to_obstacle <= self.jump_distance:
@@ -210,7 +218,7 @@ while running:
     # flip() the display to print all changes in the screen
     pygame.display.flip()
 
-    clock.tick(60)  # limits FPS to 60
-
+    clock.tick(120)  # limits FPS to 60
+    print(ball.rect.y)
 
 pygame.quit()
