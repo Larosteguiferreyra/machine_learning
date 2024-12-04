@@ -130,7 +130,8 @@ class Machine():
     # Record jump data
     def record_jump(self, y_difference):
         if self.last_jump_distance is not None:
-            self.jumps[self.jump_count] = (self.last_jump_distance, y_difference)
+            self.jumps[y_difference] = self.last_jump_distance
+            self.jumps = dict(sorted(self.jumps.items()))
             self.jump_count += 1
             self.last_jump_distance = None  # Reset for the next jump
 
